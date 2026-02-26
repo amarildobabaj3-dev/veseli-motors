@@ -106,7 +106,6 @@ def shto_makine():
         db.session.commit()
         return redirect(url_for('salloni'))
     return render_template('shto_makine.html')
-
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))

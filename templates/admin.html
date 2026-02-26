@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Panel</title>
+    <style>
+        body { background: #111; color: white; font-family: sans-serif; padding: 40px; }
+        .form-box { background: #000; padding: 30px; border: 2px solid #ff0000; border-radius: 10px; width: 450px; margin: auto; }
+        input, textarea { width: 95%; padding: 10px; margin: 8px 0; background: #222; border: 1px solid #444; color: white; border-radius: 5px; }
+        button { width: 100%; padding: 15px; background: #ff0000; color: white; font-weight: 900; border: none; cursor: pointer; margin-top: 10px; }
+        table { width: 100%; margin-top: 40px; border-collapse: collapse; }
+        th, td { border: 1px solid #333; padding: 12px; text-align: left; }
+        th { background: #ff0000; }
+        .btn-fshij { color: #ff0000; text-decoration: none; border: 1px solid #ff0000; padding: 5px 10px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="form-box">
+        <h2 style="text-align:center; color:#ff0000;">SHTO BISHË TË RE</h2>
+        <form action="/shto" method="POST">
+            <input type="text" name="emri" placeholder="Emri i makinës" required>
+            <input type="text" name="cmimi" placeholder="Çmimi Euro" required>
+            <input type="text" name="foto" placeholder="Linku i Fotos 1 (Kryesorja)" required>
+            <input type="text" name="foto2" placeholder="Linku i Fotos 2 (Opsionale)">
+            <input type="text" name="foto3" placeholder="Linku i Fotos 3 (Opsionale)">
+            <input type="text" name="viti" placeholder="Viti">
+            <input type="text" name="karburanti" placeholder="Karburanti">
+            <input type="text" name="numri" placeholder="Nr. Kontakti">
+            <textarea name="p1" placeholder="Përshkrim i shkurtër"></textarea>
+            <textarea name="p2" placeholder="Përshkrim i detajuar"></textarea>
+            <button type="submit">HEDH NË SALLON</button>
+        </form>
+    </div>
+
+    <h2 style="margin-top:50px;">MENAXHO SALLONIN</h2>
+    <table>
+        <tr><th>Makina</th><th>Çmimi</th><th>Veprimi</th></tr>
+        {% for m in makinat %}
+        <tr>
+            <td>{{ m.emri }}</td>
+            <td>{{ m.cmimi }} €</td>
+            <td><a href="/fshij/{{ m.id }}" class="btn-fshij" onclick="return confirm('A do ta fshish?')">FSHIJ</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p style="text-align:center; margin-top:30px;"><a href="/" style="color:white;">Kthehu te Ballina</a></p>
+</body>
+</html>

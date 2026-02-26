@@ -1,0 +1,12 @@
+import time
+print("duke u ngarkuar...")
+time.sleep(1)
+print("⬛⬜⬜⬜⬜ 20%")
+time.sleep(1)
+print("⬛⬛⬜⬜⬜ 40%")
+time.sleep(1)
+print("⬛⬛⬛⬜⬜ 60%")
+time.sleep(1)
+print("⬛⬛⬛⬛⬜ 80%")
+time.sleep(1)
+print("⬛⬛⬛⬛⬛ 100%")

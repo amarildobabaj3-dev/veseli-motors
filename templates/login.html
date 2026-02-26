@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Veseli Motors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            /* Sfond i errët me një bishë makinë */
+            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), 
+            url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1920&q=100'); 
+            background-size: cover; background-position: center;
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            font-family: 'Montserrat', sans-serif; margin: 0; overflow: hidden;
+        }
+
+        .auth-card { 
+            background: rgba(15, 15, 15, 0.9); padding: 45px; border-radius: 20px; 
+            border: 1px solid #ff0000; width: 360px; text-align: center;
+            backdrop-filter: blur(15px); box-shadow: 0 20px 50px rgba(255,0,0,0.15);
+        }
+
+        h2 { color: #ff0000; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; letter-spacing: 3px; }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        
+        input { 
+            width: 100%; padding: 14px; background: rgba(255,255,255,0.05);
+            border: 1px solid #333; border-radius: 8px; color: white; outline: none; 
+            box-sizing: border-box; transition: 0.3s; font-size: 14px;
+        }
+        input:focus { border-color: #ff0000; background: rgba(255,255,255,0.1); }
+
+        .btn-action { 
+            width: 100%; padding: 16px; background: #ff0000; color: white; 
+            border: none; border-radius: 8px; font-weight: 900; cursor: pointer; 
+            text-transform: uppercase; margin-top: 10px; transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255,0,0,0.3);
+        }
+        .btn-action:hover { background: white; color: #ff0000; transform: translateY(-2px); }
+
+        .footer-links { margin-top: 25px; font-size: 12px; }
+        .footer-links a { color: #888; text-decoration: none; transition: 0.3s; }
+        .footer-links a:hover { color: #ff0000; }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <h2>PANELLI HYRJES</h2>
+        <form action="/login" method="POST">
+            <input type="text" name="username" placeholder="Përdoruesi" required>
+            <input type="password" name="password" placeholder="Fjalëkalimi" required>
+            <button type="submit" class="btn-action">HYR TANI</button>
+        </form>
+        <div class="footer-links">
+            <a href="/signup">Nuk ke llogari? Regjistrohu</a><br><br>
+            <a href="/">← Kthehu te Ballina</a>
+        </div>
+    </div>
+</body>
+</html>

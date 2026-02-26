@@ -105,7 +105,8 @@ def shto_makine():
         db.session.add(m)
         db.session.commit()
         return redirect(url_for('salloni'))
-    # Ky rresht duhet të jetë ngjitur në të majtë, pa hapësira
+    return render_template('shto_makine.html')
+
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))

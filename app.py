@@ -3,15 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
-app.secret_key = 'veseli_motors_ultimate_v3'
+app.secret_key = 'veseli_motors_pro_v4'
 
-# Databaza e re per te shmangur error-et e vjeter
+# Konfigurimi i Databazes
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'motors_v3.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Modelet e Databazes
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -27,7 +26,7 @@ class Makina(db.Model):
     kambio = db.Column(db.String(20))
     kilometrat = db.Column(db.Integer)
     foto_url = db.Column(db.Text)
-    celulari = db.Column(db.String(20)) # Numri i telefonit per cdo shites
+    celulari = db.Column(db.String(20))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 with app.app_context():
@@ -35,14 +34,11 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    if 'user_id' in session:
-        return redirect(url_for('salloni'))
-    return redirect(url_for('signup'))
+    # Faqja me Ferrarin qe eshte e hapur per cdo kend
+    return render_template('index.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if 'user_id' in session:
-        return redirect(url_for('salloni'))
     if request.method == 'POST':
         user = request.form.get('username')
         pw = request.form.get('password')
@@ -60,23 +56,20 @@ def login():
         if user and user.password == request.form.get('password'):
             session['user_id'] = user.id
             session['username'] = user.username
-            # Ketu behesh ti ADMIN
-            if user.username == 'pronari':
-                session['is_admin'] = True
+            if user.username == 'pronari': session['is_admin'] = True
             return redirect(url_for('salloni'))
     return render_template('login.html')
 
 @app.route('/salloni')
 def salloni():
-    if 'user_id' not in session:
-        return redirect(url_for('signup'))
+    # Kjo faqe tani eshte e hapur pa login
     makinat = Makina.query.all()
     return render_template('salloni.html', makinat=makinat)
 
 @app.route('/shto', methods=['GET', 'POST'])
 def shto():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
+    # Vetem ketu kerkohet login
+    if 'user_id' not in session: return redirect(url_for('login'))
     if request.method == 'POST':
         m = Makina(
             marka=request.form.get('marka'), modeli=request.form.get('modeli'),
@@ -92,8 +85,7 @@ def shto():
 
 @app.route('/fshij/<int:id>')
 def fshij(id):
-    if not session.get('is_admin'):
-        return "Nuk ke leje vlla!", 403
+    if not session.get('is_admin'): return "Jo autorizuar", 403
     m = Makina.query.get(id)
     if m:
         db.session.delete(m)
@@ -103,7 +95,7 @@ def fshij(id):
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('signup'))
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

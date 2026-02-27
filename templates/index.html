@@ -1,30 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="sq">
 <head>
-    <title>Veseli Motors</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mirësevini | Veseli Motors</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body, html { height: 100%; margin: 0; background: #000; overflow: hidden; }
+        .bg-img {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1592192103926-0e56593f2ad9?q=80&w=2070&auto=format&fit=crop');
+            height: 100%; background-position: center; background-repeat: no-repeat; background-size: cover;
+            display: flex; align-items: center; justify-content: center; text-align: center; color: white;
+        }
+        h1 { font-size: 4.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 5px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .btn-enter { background: #dc3545; color: white; padding: 18px 50px; font-size: 1.3rem; border-radius: 50px; font-weight: bold; text-decoration: none; transition: 0.4s; border: 2px solid #dc3545; }
+        .btn-enter:hover { background: transparent; color: white; transform: scale(1.1); }
+    </style>
 </head>
-<body class="bg-dark text-white">
-    <div class="container text-center mt-5">
-        <h1>Mirësevini në Veseli Motors 🏎️</h1>
-        <img src="https://images.unsplash.com/photo-1592192103023-d7355b1f8172?q=80&w=1000&auto=format&fit=crop" class="img-fluid rounded shadow my-4" style="max-height: 400px;">
-        
-        <div class="d-grid gap-2 d-md-block">
-            <a href="/shto" class="btn btn-danger btn-lg">Shto Makinë të Re</a>
-        </div>
-
-        <h2 class="mt-5">Makinat në Sallon:</h2>
-        <div class="row mt-3">
-            {% for m in makinat %}
-            <div class="col-md-4 mb-3">
-                <div class="card bg-secondary text-white">
-                    <div class="card-body">
-                        <h5>{{ m.marka }} {{ m.modeli }}</h5>
-                        <p>Viti: {{ m.viti }} | Çmimi: {{ m.cmimi }}€</p>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+<body>
+    <div class="bg-img">
+        <div>
+            <h1 class="mb-3">VESELI MOTORS</h1>
+            <p class="fs-4 mb-5 text-light opacity-75">Makina Luksoze & Performancë Premium</p>
+            <a href="/salloni" class="btn-enter">HYR NË SALLON</a>
         </div>
     </div>
 </body>

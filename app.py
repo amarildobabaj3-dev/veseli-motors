@@ -12,13 +12,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 've
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Modeli i Përdoruesit (Për Sign Up)
+# Modeli i Përdoruesit
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
 
-# Modeli i Makinës (Me të gjitha opsionet)
+# Modeli i Makinës
 class Makina(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     marka = db.Column(db.String(50), nullable=False)
@@ -47,6 +47,7 @@ def salloni():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
+        # Krijon llogarine e re ne databaze
         hashed_pw = generate_password_hash(request.form['password'], method='pbkdf2:sha256')
         new_user = User(username=request.form['username'], password=hashed_pw)
         db.session.add(new_user)
@@ -60,14 +61,18 @@ def login():
         user = User.query.filter_by(username=request.form['username']).first()
         if user and check_password_hash(user.password, request.form['password']):
             session['user_id'] = user.id
-            if user.username == 'admin': # Ti regjistrohu me emrin admin
+            # KETU ESHTE NDRYSHIMI: Emri i pronarit eshte 'pronari'
+            if user.username == 'pronari':
                 session['is_admin'] = True
             return redirect(url_for('home'))
     return render_template('login.html')
 
 @app.route('/shto', methods=['GET', 'POST'])
 def shto():
-    if not session.get('is_admin'): return "Nuk ke leje!", 403
+    # Vetem 'pronari' mund te shtoje makina
+    if not session.get('is_admin'): 
+        return "Nuk ke leje! Vetem Pronari mund te shtoje makina.", 403
+    
     if request.method == 'POST':
         m = Makina(
             marka=request.form['marka'], modeli=request.form['modeli'],

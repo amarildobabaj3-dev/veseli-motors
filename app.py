@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
-app.secret_key = 'veseli_motors_key'
+app.secret_key = 'veseli_motors_sekret_shume'
 
 # Konfigurimi i Database
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -20,25 +20,45 @@ class Makina(db.Model):
     viti = db.Column(db.Integer, nullable=False)
     cmimi = db.Column(db.Float, nullable=False)
 
-# Krijimi i DB automatikisht
 with app.app_context():
     db.create_all()
 
 @app.route('/')
 def index():
     makinat = Makina.query.all()
-    return render_template('index.html', makinat=makinat)
+    # Shikon nëse përdoruesi është admin për të treguar butonin e shtimit
+    is_admin = session.get('admin_logged_in', False)
+    return render_template('index.html', makinat=makinat, is_admin=is_admin)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        # Këtu vendos username dhe pass tëndin
+        if username == 'admin' and password == 'admin123':
+            session['admin_logged_in'] = True
+            return redirect(url_for('index'))
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('index'))
 
 @app.route('/shto', methods=['GET', 'POST'])
 def shto_makine():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
-        re_marka = request.form.get('marka')
-        re_modeli = request.form.get('modeli')
-        re_viti = request.form.get('viti')
-        re_cmimi = request.form.get('cmimi')
-        
-        re_makina = Makina(marka=re_marka, modeli=re_modeli, viti=re_viti, cmimi=re_cmimi)
-        db.session.add(re_makina)
+        m = Makina(
+            marka=request.form.get('marka'),
+            modeli=request.form.get('modeli'),
+            viti=request.form.get('viti'),
+            cmimi=request.form.get('cmimi')
+        )
+        db.session.add(m)
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('shto_makine.html')

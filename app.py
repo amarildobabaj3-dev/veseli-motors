@@ -5,21 +5,20 @@ import os
 app = Flask(__name__)
 app.secret_key = 'veseli_motors_premium_key'
 
-# LIDHJA ME DATABASE
+# LIDHJA ME DATABASE (Marrë nga fotoja jote e dytë)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 if app.config['SQLALCHEMY_DATABASE_URI'] and app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
     app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
 
 db = SQLAlchemy(app)
 
-# MODELI I PËRDORUESIT (PËR LOGIN/SIGNUP)
+# MODELI I PËRDORUESIT
 class Perdoruesi(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    eshte_admin = db.Column(db.Boolean, default=False)
 
-# MODELI I MAKINËS (ME 4 FOTO DHE WHATSAPP)
+# MODELI I MAKINËS ME WHATSAPP DHE RENDITJE
 class Makina(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     marka = db.Column(db.String(50))
@@ -29,7 +28,7 @@ class Makina(db.Model):
     karburanti = db.Column(db.String(20))
     kambio = db.Column(db.String(20))
     kilometrat = db.Column(db.String(50))
-    celulari = db.Column(db.String(20)) 
+    celulari = db.Column(db.String(20)) # Këtu shkruhet numri i WhatsApp
     foto1 = db.Column(db.Text)
     foto2 = db.Column(db.Text)
     foto3 = db.Column(db.Text)
@@ -57,20 +56,15 @@ def login():
         if user:
             session['user_id'] = user.id
             session['username'] = user.username
-            # Kontrolli për Adminin
+            # Kontrolli për Adminin (Ti)
             if user.username == 'pronari' and user.password == 'saadi123':
                 session['is_admin'] = True
             return redirect(url_for('home'))
     return render_template('login.html')
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('home'))
-
 @app.route('/salloni')
 def salloni():
-    # Renditja: Viti më i ri del i pari
+    # RENDITJA: Viti më i ri del i pari (psh 2026 i pari)
     makinat = Makina.query.order_by(Makina.viti.desc()).all()
     return render_template('salloni.html', makinat=makinat)
 
@@ -97,7 +91,7 @@ def shto_makine():
 @app.route('/fshij/<int:id>')
 def fshij_makine(id):
     makina = Makina.query.get_or_4_0_4(id)
-    # Vetëm pronari ose ai që e hodhi mund ta fshijë
+    # VETËM PRONARI OSE AI QË E HODHI MUND TA FSHIJË
     if session.get('is_admin') or (session.get('user_id') == makina.user_id):
         db.session.delete(makina)
         db.session.commit()

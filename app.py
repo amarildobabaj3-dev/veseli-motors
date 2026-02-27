@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
-app.secret_key = 'veseli_motors_pro_v4'
+app.secret_key = 'veseli_motors_pro_v5'
 
 # Konfigurimi i Databazes
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -34,7 +34,6 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    # Faqja me Ferrarin qe eshte e hapur per cdo kend
     return render_template('index.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -62,13 +61,11 @@ def login():
 
 @app.route('/salloni')
 def salloni():
-    # Kjo faqe tani eshte e hapur pa login
     makinat = Makina.query.all()
     return render_template('salloni.html', makinat=makinat)
 
 @app.route('/shto', methods=['GET', 'POST'])
 def shto():
-    # Vetem ketu kerkohet login
     if 'user_id' not in session: return redirect(url_for('login'))
     if request.method == 'POST':
         m = Makina(
@@ -98,6 +95,5 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == "__main__":
-    # Kjo i thote Renderit: perdor porten 10000 ose ate qe te jep sistemi
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)

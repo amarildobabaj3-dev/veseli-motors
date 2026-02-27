@@ -12,7 +12,7 @@ if app.config['SQLALCHEMY_DATABASE_URI'] and app.config['SQLALCHEMY_DATABASE_URI
 
 db = SQLAlchemy(app)
 
-# MODELI I MAKINËS ME TË GJITHA FUSHAT
+# MODELI I PLOTË I MAKINËS
 class Makina(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     marka = db.Column(db.String(50))

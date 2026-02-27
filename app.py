@@ -3,11 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
-app.secret_key = 'veseli_motors_ultra_final'
+app.secret_key = 'veseli_motors_master_v1'
 
-# Databaza e re per te suportuar 4 foto
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'motors_v4.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'motors_final.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -15,7 +14,6 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    makinat = db.relationship('Makina', backref='owner', lazy=True)
 
 class Makina(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,7 +24,6 @@ class Makina(db.Model):
     karburanti = db.Column(db.String(20))
     kambio = db.Column(db.String(20))
     kilometrat = db.Column(db.Integer)
-    # 4 Fusha per foto
     foto1 = db.Column(db.Text)
     foto2 = db.Column(db.Text)
     foto3 = db.Column(db.Text)
@@ -61,14 +58,16 @@ def login():
         if user and user.password == request.form.get('password'):
             session['user_id'] = user.id
             session['username'] = user.username
-            if user.username == 'pronari': session['is_admin'] = True
-            return redirect(url_for('salloni'))
+            return redirect(url_for('index'))
     return render_template('login.html')
 
 @app.route('/salloni')
 def salloni():
-    # Renditja: Viti me i ri i pari
-    makinat = Makina.query.order_by(Makina.viti.desc()).all()
+    query = request.args.get('search')
+    if query:
+        makinat = Makina.query.filter(Makina.marka.contains(query)).order_by(Makina.viti.desc()).all()
+    else:
+        makinat = Makina.query.order_by(Makina.viti.desc()).all()
     return render_template('salloni.html', makinat=makinat)
 
 @app.route('/detaje/<int:id>')
@@ -98,8 +97,8 @@ def shto():
 def fshij(id):
     m = Makina.query.get(id)
     if not m: return redirect(url_for('salloni'))
-    # Vetem pronari fshin cdo gje, tjeret fshijne vetem te tyren
-    if session.get('is_admin') or m.user_id == session.get('user_id'):
+    # Pronari fshin cdo gje, perdoruesit vetem te tyren
+    if session.get('username') == 'pronari' or m.user_id == session.get('user_id'):
         db.session.delete(m)
         db.session.commit()
     return redirect(url_for('salloni'))

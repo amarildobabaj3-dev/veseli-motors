@@ -3,120 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shto Makinë | Veseli Motors</title>
+    <title>Shto Makine | Veseli Motors</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body { background-color: #0b0b0b; color: white; font-family: 'Segoe UI', sans-serif; }
-        .form-container { 
-            background: #151515; 
-            padding: 30px; 
-            border-radius: 15px; 
-            border: 1px solid #333;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-top: 50px;
-            margin-bottom: 50px;
-        }
-        .form-control, .form-select { 
-            background-color: #222; 
-            border: 1px solid #444; 
-            color: white; 
-        }
-        .form-control:focus, .form-select:focus { 
-            background-color: #252525; 
-            border-color: #dc3545; 
-            color: white; 
-            box-shadow: none;
-        }
-        label { font-weight: bold; color: #aaa; margin-bottom: 5px; }
-        .btn-post { 
-            background-color: #dc3545; 
-            border: none; 
-            padding: 12px; 
-            font-weight: bold; 
-            letter-spacing: 1px;
-        }
-        .btn-post:hover { background-color: #ff0000; }
-        .section-title { border-left: 4px solid #dc3545; padding-left: 10px; margin-bottom: 20px; }
+        /* DIZAJNI JOT ORIGJINAL I PAPREKUR */
+        body { background: #000; color: white; font-family: 'Arial Black', sans-serif; }
+        .form-container { background: #111; padding: 30px; border-radius: 15px; border: 1px solid #dc3545; margin-top: 50px; }
+        .form-control { background: #222; border: 1px solid #333; color: white; }
+        .form-control:focus { background: #333; color: white; border-color: #dc3545; box-shadow: none; }
+        label { color: #aaa; font-size: 0.9rem; margin-top: 10px; }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 form-container">
+                <h2 class="text-center text-danger mb-4">SHTO MAKINË TË RE</h2>
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Marka</label>
+                            <input type="text" name="marka" class="form-control" placeholder="Psh: Mercedes-Benz" required>
+                            
+                            <label>Modeli</label>
+                            <input type="text" name="modeli" class="form-control" placeholder="Psh: E-Class" required>
+                            
+                            <label>Viti</label>
+                            <input type="number" name="viti" class="form-control" placeholder="2022" required>
+                            
+                            <label>Çmimi (€)</label>
+                            <input type="number" name="cmimi" class="form-control" placeholder="25000" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Karburanti</label>
+                            <select name="karburanti" class="form-control">
+                                <option>Nafte</option>
+                                <option>Benzine</option>
+                                <option>Hibrid</option>
+                                <option>Elektrike</option>
+                            </select>
+                            
+                            <label>Kambio</label>
+                            <select name="kambio" class="form-control">
+                                <option>Automatike</option>
+                                <option>Manuale</option>
+                            </select>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8 form-container">
-            <h2 class="text-center mb-4 text-danger fw-bold">PANELI I PRONARIT</h2>
-            <p class="text-center text-muted mb-5">Plotëso detajet për të shtuar një bishë të re në sallon.</p>
+                            <label>Kilometrat</label>
+                            <input type="number" name="kilometrat" class="form-control" placeholder="150000" required>
 
-            <form method="POST">
-                <div class="section-title"><h4>Informacioni Bazë</h4></div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label>Marka</label>
-                        <input type="text" name="marka" class="form-control" placeholder="p.sh. Ferrari" required>
+                            <label class="text-success" style="font-weight: bold;">Celulari (WhatsApp)</label>
+                            <input type="text" name="celulari" class="form-control" placeholder="3556XXXXXXXX" required>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Modeli</label>
-                        <input type="text" name="modeli" class="form-control" placeholder="p.sh. 488 Pista" required>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label>Viti</label>
-                        <input type="number" name="viti" class="form-control" placeholder="2024">
+                    <div class="mt-4">
+                        <label>Linku i Fotos 1 (Kryesorja)</label>
+                        <input type="text" name="foto1" class="form-control" placeholder="https://..." required>
+                        <label>Linku i Fotos 2</label>
+                        <input type="text" name="foto2" class="form-control" placeholder="https://...">
+                        <label>Linku i Fotos 3</label>
+                        <input type="text" name="foto3" class="form-control" placeholder="https://...">
+                        <label>Linku i Fotos 4</label>
+                        <input type="text" name="foto4" class="form-control" placeholder="https://...">
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label>Çmimi (€)</label>
-                        <input type="number" step="0.01" name="cmimi" class="form-control" placeholder="250000">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label>Kilometrat</label>
-                        <input type="number" name="kilometrat" class="form-control" placeholder="5000">
-                    </div>
-                </div>
 
-                <div class="section-title mt-4"><h4>Specifikimet Teknike</h4></div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label>Karburanti</label>
-                        <select name="karburanti" class="form-select">
-                            <option value="Benzinë">Benzinë</option>
-                            <option value="Naftë">Naftë</option>
-                            <option value="Hibrid">Hibrid</option>
-                            <option value="Elektrike">Elektrike</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Kambio</label>
-                        <select name="kambio" class="form-select">
-                            <option value="Automatike">Automatike</option>
-                            <option value="Manuale">Manuale</option>
-                        </select>
-                    </div>
-                </div>
+                    <label>Përshkrimi</label>
+                    <textarea name="pershkrimi" class="form-control" rows="3"></textarea>
 
-                <div class="section-title mt-4"><h4>Imazhet dhe Përshkrimi</h4></div>
-                <div class="mb-3">
-                    <label>Linku i Fotos Kryesore (URL)</label>
-                    <input type="text" name="foto" class="form-control" placeholder="Vendos linkun e fotos këtu...">
-                </div>
-                <div class="mb-3">
-                    <label>Linku i Fotos së Dytë (URL)</label>
-                    <input type="text" name="foto2" class="form-control" placeholder="Vendos linkun e fotos së dytë...">
-                </div>
-                <div class="mb-3">
-                    <label>Përshkrimi i Makinës</label>
-                    <textarea name="pershkrimi" class="form-control" rows="4" placeholder="Shkruaj diçka për këtë makinë..."></textarea>
-                </div>
-
-                <div class="d-grid gap-2 mt-5">
-                    <button type="submit" class="btn btn-post text-white">PUBLIKO MAKINËN 🚀</button>
-                    <a href="/" class="btn btn-outline-secondary text-white border-0">Anulo dhe kthehu</a>
-                </div>
-            </form>
+                    <button type="submit" class="btn btn-danger w-100 mt-4 fw-bold">PUBLIKO MAKINËN</button>
+                    <a href="/salloni" class="btn btn-outline-secondary w-100 mt-2 btn-sm">Anulo</a>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-
 </body>
 </html>

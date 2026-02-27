@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
-app.secret_key = 'sekreti_yt_ketu'
+app.secret_key = 'veseli_motors_sekret'
 
 # Konfigurimi i Database
 basedir = os.path.abspath(os.path.dirname(__name__))
@@ -20,12 +20,17 @@ class Makina(db.Model):
     viti = db.Column(db.Integer, nullable=False)
     cmimi = db.Column(db.Float, nullable=False)
 
-# Rrugët (Routes)
+# Krijimi i Database automatikisht
+with app.app_context():
+    db.create_all()
+
+# Faqja Kryesore (Salloni)
 @app.route('/')
 def index():
     makinat = Makina.query.all()
     return render_template('index.html', makinat=makinat)
 
+# Faqja per te shtuar makina
 @app.route('/shto', methods=['GET', 'POST'])
 def shto_makine():
     if request.method == 'POST':
@@ -40,7 +45,6 @@ def shto_makine():
         return redirect(url_for('index'))
     return render_template('shto_makine.html')
 
-# KJO ESHTE PJESA QE SHTUAM PER RENDER
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)

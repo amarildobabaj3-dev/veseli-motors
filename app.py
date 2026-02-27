@@ -3,11 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
-app.secret_key = 'veseli_motors_pro_v5'
+app.secret_key = 'veseli_motors_ultra_final'
 
-# Konfigurimi i Databazes
+# Databaza e re per te suportuar 4 foto
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'motors_v3.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'motors_v4.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -15,6 +15,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    makinat = db.relationship('Makina', backref='owner', lazy=True)
 
 class Makina(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,9 +26,14 @@ class Makina(db.Model):
     karburanti = db.Column(db.String(20))
     kambio = db.Column(db.String(20))
     kilometrat = db.Column(db.Integer)
-    foto_url = db.Column(db.Text)
+    # 4 Fusha per foto
+    foto1 = db.Column(db.Text)
+    foto2 = db.Column(db.Text)
+    foto3 = db.Column(db.Text)
+    foto4 = db.Column(db.Text)
     celulari = db.Column(db.String(20))
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    pershkrimi = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 with app.app_context():
     db.create_all()
@@ -61,8 +67,14 @@ def login():
 
 @app.route('/salloni')
 def salloni():
-    makinat = Makina.query.all()
+    # Renditja: Viti me i ri i pari
+    makinat = Makina.query.order_by(Makina.viti.desc()).all()
     return render_template('salloni.html', makinat=makinat)
+
+@app.route('/detaje/<int:id>')
+def detaje(id):
+    makina = Makina.query.get_or_404(id)
+    return render_template('detajet.html', makina=makina)
 
 @app.route('/shto', methods=['GET', 'POST'])
 def shto():
@@ -72,8 +84,10 @@ def shto():
             marka=request.form.get('marka'), modeli=request.form.get('modeli'),
             viti=request.form.get('viti'), cmimi=request.form.get('cmimi'),
             karburanti=request.form.get('karburanti'), kambio=request.form.get('kambio'),
-            kilometrat=request.form.get('kilometrat'), foto_url=request.form.get('foto'),
-            celulari=request.form.get('celulari'), owner_id=session['user_id']
+            kilometrat=request.form.get('kilometrat'), celulari=request.form.get('celulari'),
+            foto1=request.form.get('foto1'), foto2=request.form.get('foto2'),
+            foto3=request.form.get('foto3'), foto4=request.form.get('foto4'),
+            pershkrimi=request.form.get('pershkrimi'), user_id=session['user_id']
         )
         db.session.add(m)
         db.session.commit()
@@ -82,9 +96,10 @@ def shto():
 
 @app.route('/fshij/<int:id>')
 def fshij(id):
-    if not session.get('is_admin'): return "Jo autorizuar", 403
     m = Makina.query.get(id)
-    if m:
+    if not m: return redirect(url_for('salloni'))
+    # Vetem pronari fshin cdo gje, tjeret fshijne vetem te tyren
+    if session.get('is_admin') or m.user_id == session.get('user_id'):
         db.session.delete(m)
         db.session.commit()
     return redirect(url_for('salloni'))

@@ -3,62 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salloni Premium | Veseli Motors</title>
+    <title>Salloni | Veseli Motors</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body { background-color: #000; color: white; font-family: 'Segoe UI', sans-serif; }
-        .navbar { background-color: #111; border-bottom: 2px solid #dc3545; }
+        body { background: #0a0a0a; color: white; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background: #000; border-bottom: 2px solid #dc3545; padding: 15px; }
+        .logo-text { font-family: 'Impact', sans-serif; letter-spacing: 2px; color: #dc3545; text-decoration: none; font-size: 2rem; }
+        
+        /* DIZAJNI KUTI SHKREPSE (KATRQR) */
         .car-card { 
-            background: #111; border: 1px solid #333; border-radius: 15px; 
-            overflow: hidden; margin-bottom: 30px; transition: 0.4s;
+            background: #151515; border: 1px solid #333; border-radius: 8px; 
+            overflow: hidden; transition: 0.3s; height: 100%; display: flex; flex-direction: column;
         }
-        .car-card:hover { border-color: #dc3545; transform: translateY(-5px); }
-        .car-img { width: 100%; height: 230px; object-fit: cover; }
-        .price-tag { color: #dc3545; font-size: 1.5rem; font-weight: bold; }
-        .btn-whatsapp { background-color: #25d366; color: white; font-weight: bold; border: none; }
-        .btn-whatsapp:hover { background-color: #128c7e; color: white; }
+        .car-card:hover { transform: translateY(-5px); border-color: #dc3545; }
+        
+        .img-container { 
+            width: 100%; 
+            aspect-ratio: 1 / 1; /* Kjo e ben katrore si kuti shkrepse */
+            overflow: hidden; 
+        }
+        .car-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .card-body { padding: 12px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .car-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+        .car-meta { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+        .price { color: #dc3545; font-size: 1.3rem; font-weight: 900; margin-bottom: 15px; }
+        
+        .btn-detaje { 
+            background: #dc3545; color: white; border: none; font-weight: bold; 
+            padding: 10px; border-radius: 4px; text-decoration: none; font-size: 0.9rem;
+        }
+        .btn-detaje:hover { background: white; color: #dc3545; }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark p-3">
-        <div class="container d-flex justify-content-between">
-            <a class="navbar-brand fw-bold text-danger fs-3" href="/">VESELI MOTORS</a>
+    <nav class="navbar navbar-dark">
+        <div class="container d-flex justify-content-between align-items: center;">
+            <a class="logo-text" href="/">VESELI MOTORS</a>
             <div>
                 {% if session.get('user_id') %}
-                    <a href="/shto" class="btn btn-outline-light btn-sm">+ SHTO MAKINË</a>
-                    <a href="/logout" class="btn btn-dark btn-sm ms-2 border-secondary">Dali</a>
+                    <a href="/shto" class="btn btn-outline-light btn-sm">+ SHTO</a>
+                    <a href="/logout" class="btn btn-danger btn-sm ms-2">DALJE</a>
                 {% else %}
-                    <a href="/login" class="btn btn-outline-danger btn-sm">HYRJE PROPRIETAR</a>
+                    <a href="/login" class="btn btn-outline-danger btn-sm">LOG IN</a>
                 {% endif %}
             </div>
         </div>
     </nav>
 
     <div class="container mt-5">
-        <h2 class="text-center mb-5 fw-bold text-uppercase">Makinat në <span class="text-danger">Shitje</span></h2>
-        
-        <div class="row">
-            {% for makina in makinat %}
-            <div class="col-md-4">
-                <div class="car-card">
-                    <img src="{{ makina.foto_url }}" class="car-img" onerror="this.src='https://via.placeholder.com/400x250?text=Foto+nuk+gjendet'">
-                    <div class="p-3">
-                        <h4 class="fw-bold">{{ makina.marka }} {{ makina.modeli }}</h4>
-                        <p class="text-secondary small mb-2">{{ makina.viti }} | {{ makina.karburanti }} | {{ makina.kilometrat }} km</p>
-                        <div class="price-tag mb-3">{{ makina.cmimi }} €</div>
-
-                        <div class="d-grid gap-2">
-                            <a href="https://wa.me/{{ makina.celulari }}?text=Pershendetje!+Jam+i+interesuar+per+makinen:+{{ makina.marka|replace(' ', '+') }}+{{ makina.modeli|replace(' ', '+') }}+viti+{{ makina.viti }}.+A+eshte+ende+e+lire?" 
-                               target="_blank" class="btn btn-whatsapp">
-                               💬 INTERESOHU NË WHATSAPP
-                            </a>
-
-                            {% if session.get('is_admin') %}
-                            <a href="/fshij/{{ makina.id }}" class="btn btn-outline-danger btn-sm mt-2" onclick="return confirm('A je i sigurt?')">
-                               🗑️ FSHIJ SI ADMIN
-                            </a>
-                            {% endif %}
+        <div class="row g-3"> {% for makina in makinat %}
+            <div class="col-6 col-md-4 col-lg-3"> <div class="car-card">
+                    <div class="img-container">
+                        <img src="{{ makina.foto1 }}" class="car-img" onerror="this.src='https://via.placeholder.com/400x400?text=Veseli+Motors'">
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <div class="car-title">{{ makina.marka }}</div>
+                            <div class="car-meta">{{ makina.viti }} | {{ makina.karburanti }}</div>
+                            <div class="price">{{ makina.cmimi }} €</div>
                         </div>
+                        <a href="/detaje/{{ makina.id }}" class="btn-detaje">INTERESOHU</a>
                     </div>
                 </div>
             </div>

@@ -5,19 +5,26 @@ import os
 app = Flask(__name__)
 app.secret_key = 'veseli_motors_master_final_2026'
 
-# Konfigurimi i Database
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'motors_final.db')
+# --- LIDHJA ME DATABASE-N E PERHERSHME (POSTGRES) ---
+# Kjo rresht merr linkun qe vendose te Environment Variables
+db_url = os.environ.get('DATABASE_URL')
+
+# Rregullim teknik per Render qe te njohe Postgres-in sakte
+if db_url and db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url or 'sqlite:///motors_final.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+# ---------------------------------------------------------
 
-# Modeli i Perdoruesit
+# MODELI I PERDORUESVE
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
 
-# Modeli i Makines (Me 4 foto dhe opsionet e plota)
+# MODELI I MAKINAVE
 class Makina(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     marka = db.Column(db.String(50))
@@ -35,16 +42,15 @@ class Makina(db.Model):
     pershkrimi = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-# KRIJIMI I DATABASE DHE ADMINIT TE PERHERSHEM
+# KRIJIMI I TABELAVE DHE ADMINIT AUTOMATIK
 with app.app_context():
     db.create_all()
-    # Kjo e ben qe 'pronari' te jete gjithmone aktiv
-    admin_exists = User.query.filter_by(username='pronari').first()
-    if not admin_exists:
+    # Krijon llogarine 'pronari' nese nuk eshte ne database-n e re
+    admin = User.query.filter_by(username='pronari').first()
+    if not admin:
         new_admin = User(username='pronari', password='saadi123')
         db.session.add(new_admin)
         db.session.commit()
-        print("Admini 'pronari' u aktivizua me sukses!")
 
 @app.route('/')
 def index():
@@ -75,7 +81,6 @@ def login():
 @app.route('/salloni')
 def salloni():
     query = request.args.get('search')
-    # Renditja sipas vitit (desc) - Makinat e reja dalin te parat
     if query:
         makinat = Makina.query.filter(Makina.marka.contains(query)).order_by(Makina.viti.desc()).all()
     else:
@@ -108,9 +113,7 @@ def shto():
 @app.route('/fshij/<int:id>')
 def fshij(id):
     m = Makina.query.get(id)
-    if not m: return redirect(url_for('salloni'))
-    # Pronari fshin cdo makine, te tjeret vetem te tyren
-    if session.get('username') == 'pronari' or m.user_id == session.get('user_id'):
+    if m and (session.get('username') == 'pronari' or m.user_id == session.get('user_id')):
         db.session.delete(m)
         db.session.commit()
     return redirect(url_for('salloni'))

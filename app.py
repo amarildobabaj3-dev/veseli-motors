@@ -1,17 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
+app.secret_key = 'veseli_motors_secret'
 
-# LIDHJA ME DATABASE-N - MOS E PREK
+# LIDHJA ME DATABASE
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 if app.config['SQLALCHEMY_DATABASE_URI'] and app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
     app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
 
 db = SQLAlchemy(app)
 
-# MODELI I MAKINËS - SHTUAM VETËM CELULARIN QË TË MOS DALË ERROR
+# MODELI I MAKINËS ME TË GJITHA FUSHAT
 class Makina(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     marka = db.Column(db.String(50))
@@ -21,7 +22,7 @@ class Makina(db.Model):
     karburanti = db.Column(db.String(20))
     kambio = db.Column(db.String(20))
     kilometrat = db.Column(db.String(50))
-    celulari = db.Column(db.String(20)) # Kjo rregullon errorin 500
+    celulari = db.Column(db.String(20)) 
     foto1 = db.Column(db.Text)
     foto2 = db.Column(db.Text)
     foto3 = db.Column(db.Text)
@@ -37,6 +38,14 @@ def salloni():
     makinat = Makina.query.all()
     return render_template('salloni.html', makinat=makinat)
 
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+
 @app.route('/shto', methods=['GET', 'POST'])
 def shto_makine():
     if request.method == 'POST':
@@ -48,7 +57,7 @@ def shto_makine():
             karburanti=request.form['karburanti'],
             kambio=request.form['kambio'],
             kilometrat=request.form['kilometrat'],
-            celulari=request.form['celulari'], # Ky rresht duhet patjetër
+            celulari=request.form['celulari'],
             foto1=request.form['foto1'],
             foto2=request.form.get('foto2', ''),
             foto3=request.form.get('foto3', ''),

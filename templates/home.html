@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Veseli Motors | Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body { background: #000; color: white; }
+        .hero { 
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1592192103023-d7355b1f8172?q=80&w=1200');
+            height: 100vh; background-size: cover; display: flex; align-items: center; justify-content: center; text-align: center;
+        }
+        .btn-luxury { background: #dc3545; border: none; padding: 15px 40px; font-size: 1.5rem; border-radius: 50px; transition: 0.5s; }
+        .btn-luxury:hover { transform: scale(1.1); box-shadow: 0 0 20px #dc3545; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent position-absolute w-100">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="/">VESELI MOTORS</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="/salloni">Salloni</a>
+                {% if not session.user_id %}
+                    <a class="nav-link" href="/login">Log In</a>
+                    <a class="nav-link border rounded px-2" href="/signup">Sign Up</a>
+                {% else %}
+                    {% if session.is_admin %}<a class="nav-link text-warning" href="/shto">Staff+</a>{% endif %}
+                    <a class="nav-link" href="/logout">Log Out</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div>
+            <p class="lead mb-0">Vendi i duhur për të zgjedhur makinën tënde</p>
+            <h1 class="display-1 fw-bold mb-4">VESELI MOTORS</h1>
+            <a href="/salloni" class="btn btn-luxury text-white fw-bold">HYR NË SALLON</a>
+        </div>
+    </div>
+</body>
+</html>

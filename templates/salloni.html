@@ -68,3 +68,10 @@
     </div>
 </body>
 </html>
+{% if session.get('is_admin') %}
+  <span style="color: gold; font-weight: bold; text-shadow: 0 0 5px #ff4500;">
+    Staff+ Pronari
+  </span>
+{% elif session.get('username') %}
+  <span style="color: white;">Mirëseveve, {{ session['username'] }}</span>
+{% endif %}

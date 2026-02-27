@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 app.secret_key = 'veseli_motors_premium_key'
 
-# LIDHJA ME DATABASE (Marrë nga fotoja jote e dytë)
+# LIDHJA ME DATABASE
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 if app.config['SQLALCHEMY_DATABASE_URI'] and app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
     app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
@@ -18,7 +18,7 @@ class Perdoruesi(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
 
-# MODELI I MAKINËS ME WHATSAPP DHE RENDITJE
+# MODELI I MAKINËS
 class Makina(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     marka = db.Column(db.String(50))
@@ -28,13 +28,13 @@ class Makina(db.Model):
     karburanti = db.Column(db.String(20))
     kambio = db.Column(db.String(20))
     kilometrat = db.Column(db.String(50))
-    celulari = db.Column(db.String(20)) # Këtu shkruhet numri i WhatsApp
+    celulari = db.Column(db.String(20)) # Numri i WhatsApp
     foto1 = db.Column(db.Text)
     foto2 = db.Column(db.Text)
     foto3 = db.Column(db.Text)
     foto4 = db.Column(db.Text)
     pershkrimi = db.Column(db.Text)
-    user_id = db.Column(db.Integer) # Për të ditur kush e hodhi
+    user_id = db.Column(db.Integer)
 
 @app.route('/')
 def home():
@@ -52,19 +52,26 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = Perdoruesi.query.filter_by(username=request.form['username'], password=request.form['password']).first()
+        u = request.form['username']
+        p = request.form['password']
+        user = Perdoruesi.query.filter_by(username=u, password=p).first()
         if user:
             session['user_id'] = user.id
             session['username'] = user.username
-            # Kontrolli për Adminin (Ti)
-            if user.username == 'pronari' and user.password == 'saadi123':
+            # Këtu verifikohet admini
+            if u == 'pronari' and p == 'saadi123':
                 session['is_admin'] = True
             return redirect(url_for('home'))
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
+
 @app.route('/salloni')
 def salloni():
-    # RENDITJA: Viti më i ri del i pari (psh 2026 i pari)
+    # Renditja: Viti më i ri del i pari
     makinat = Makina.query.order_by(Makina.viti.desc()).all()
     return render_template('salloni.html', makinat=makinat)
 
@@ -72,7 +79,6 @@ def salloni():
 def shto_makine():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
     if request.method == 'POST':
         reja = Makina(
             marka=request.form['marka'], modeli=request.form['modeli'],
@@ -91,7 +97,7 @@ def shto_makine():
 @app.route('/fshij/<int:id>')
 def fshij_makine(id):
     makina = Makina.query.get_or_4_0_4(id)
-    # VETËM PRONARI OSE AI QË E HODHI MUND TA FSHIJË
+    # Vetëm admini ose ai që e ka hedhur makinën mund ta fshijë
     if session.get('is_admin') or (session.get('user_id') == makina.user_id):
         db.session.delete(makina)
         db.session.commit()
@@ -105,4 +111,10 @@ def detajet(id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        # Krijimi i llogarisë tënde automatikisht
+        admin = Perdoruesi.query.filter_by(username='pronari').first()
+        if not admin:
+            admin_i_ri = Perdoruesi(username='pronari', password='saadi123')
+            db.session.add(admin_i_ri)
+            db.session.commit()
     app.run(debug=True)
